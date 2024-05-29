@@ -21,7 +21,7 @@ export async function uploadAndProcessVideo(url: string): Promise<string[]> {
           crop: 'scale',
         },
       });
-      frameUrls.push(frameUrl);
+      frameUrls.push(frameUrl); //
     }
 
     return frameUrls;
