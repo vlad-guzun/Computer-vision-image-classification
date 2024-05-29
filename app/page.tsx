@@ -1,12 +1,10 @@
 "use client";
 import '@tensorflow/tfjs';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import * as mobilenet from '@tensorflow-models/mobilenet';
 
 const Home = () => {
   const [loading, setLoading] = useState(false);
-
-
 
   const processVideo = async () => {
     setLoading(true);
@@ -17,24 +15,18 @@ const Home = () => {
 
       console.log('Original Frames:', frames);  // Log the original frames to the browser console
 
-      // Modify frame paths
-      const modifiedFrames = frames.map((frame: any, idx: number) => {
-        return frame.replace(/frame(\d+)\.png/, `frame1_${idx + 1}.png`);
-      });
-
-      console.log('Modified Frames:', modifiedFrames);  // Log the modified frames to the browser console
-
       // Load MobileNet and classify each frame
       const model = await mobilenet.load();
 
-      for (const framePath of modifiedFrames) {
+      for (let i = 0; i < frames.length; i++) {
         const img = new Image();
-        img.src = framePath;
+        img.crossOrigin = "anonymous"; // Set CORS to anonymous
+        img.src = frames[i];
         await new Promise((resolve) => {
           img.onload = resolve;
         });
         const predictions = await model.classify(img);
-        console.log(`Frame (${framePath}):`, predictions);
+        console.log(`Frame (${img.src}):`, predictions);
       }
     } catch (error) {
       console.error('Error processing video:', error);
