@@ -20,7 +20,6 @@ const Home = () => {
 
       for (let i = 0; i < frames.length; i++) {
         const img = new Image();
-        img.crossOrigin = "anonymous"; // Set CORS to anonymous
         img.src = frames[i];
         await new Promise((resolve) => {
           img.onload = resolve;
