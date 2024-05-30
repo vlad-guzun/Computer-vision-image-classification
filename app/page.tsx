@@ -9,9 +9,9 @@ const Home = () => {
   const [loading, setLoading] = useState(false);
   const [frames, setFrames] = useState<string[]>([]);
   const [predictions, setPredictions] = useState<{ [key: string]: string }>({});
+  const [processedCount, setProcessedCount] = useState(0);  // Tracks number of processed frames
   const [model, setModel] = useState<any>(null);
 
-  // Load the model
   useEffect(() => {
     const loadModel = async () => {
       const loadedModel = await mobilenet.load();
@@ -28,12 +28,22 @@ const Home = () => {
       const img = document.getElementById(`frame-${index}`) as HTMLImageElement;
       const prediction = await model.classify(img);
       if (prediction.length > 0) {
-        // Take the highest probability classification and process it
         const mostProbablePrediction = prediction[0].className.split(',')[0].trim();
         setPredictions(prev => ({ ...prev, [frames[index]]: mostProbablePrediction }));
+        setProcessedCount(prev => prev + 1);  // Increment the processed count
       }
     }
   };
+
+  useEffect(() => {
+    if (processedCount === frames.length && frames.length > 0) {
+      const uniquePredictions = new Set(Object.values(predictions));
+      const predictionWords = Array.from(uniquePredictions).join(' ').split(' ');
+      const reversedPredictions = predictionWords.reverse().join(' ');
+
+      console.log('Reversed Merged Unique Predictions:', reversedPredictions);
+    }
+  }, [processedCount, predictions]);
 
   const handleExtractFrames = async () => {
     try {
@@ -41,10 +51,12 @@ const Home = () => {
       const response = await fetch('/api/uploadVideo', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url: 'https://utfs.io/f/17f29841-6fcc-46f9-b954-6ced0f461f01-en7l1i.mp4' })
+        body: JSON.stringify({ url: 'https://utfs.io/f/093911a3-ab59-4357-ad21-7e0b5b18b2e7-e6fjr2.mp4' })
       });
       const data = await response.json();
       setFrames(data.data);
+      setPredictions({});
+      setProcessedCount(0);  // Reset the counter on new data
       setLoading(false);
       console.log('Response:', data);
     } catch (error) {

@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
     });
 
     // Assuming a maximum duration of 30 seconds for demonstration
-    const maxDuration = 8; // You may adjust based on your needs or video metadata
+    const maxDuration = 20; // You may adjust based on your needs or video metadata
     const times = Array.from({ length: maxDuration }, (_, i) => i + 1);
 
     const screenshots = times.map(time => cloudinary.v2.url(uploadResponse.public_id, {
