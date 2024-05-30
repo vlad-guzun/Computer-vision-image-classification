@@ -1,43 +1,27 @@
+// In your React component or wherever you handle the button click
 "use client";
-import '@tensorflow/tfjs';
 import React, { useState } from 'react';
-import * as mobilenet from '@tensorflow-models/mobilenet';
 
 const Home = () => {
   const [loading, setLoading] = useState(false);
 
-  const processVideo = async () => {
+  const uploadVideo = async () => {
     setLoading(true);
     try {
       const response = await fetch('/api/processVideo');
       const data = await response.json();
-      const frames = data.frames;
 
-      console.log('Original Frames:', frames);  // Log the original frames to the browser console
-
-      // Load MobileNet and classify each frame
-      const model = await mobilenet.load();
-
-      for (let i = 0; i < frames.length; i++) {
-        const img = new Image();
-        img.crossOrigin = "anonymous"; // Set CORS to anonymous
-        img.src = frames[i];
-        await new Promise((resolve) => {
-          img.onload = resolve;
-        });
-        const predictions = await model.classify(img);
-        console.log(`Frame (${img.src}):`, predictions);
-      }
+      console.log('Uploaded Video Information:', data.uploadResponse.secure_url);  // Log the uploaded video info to the browser console
     } catch (error) {
-      console.error('Error processing video:', error);
+      console.error('Error uploading video:', error);
     }
     setLoading(false);
   };
 
   return (
     <div>
-      <button onClick={processVideo} disabled={loading}>
-        {loading ? 'Processing...' : 'Process Video'}
+      <button onClick={uploadVideo} disabled={loading}>
+        {loading ? 'Uploading...' : 'Upload Video'}
       </button>
     </div>
   );
