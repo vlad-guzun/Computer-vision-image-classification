@@ -19,18 +19,18 @@ export async function POST(request: NextRequest) {
       folder: 'sample_folder'
     });
 
-    // Assuming you want to extract frames at specific times
-    const times = [1, 2, 3,4];  // Seconds - you can customize this
-    const screenshots = times.map(time => {
-      return cloudinary.v2.url(uploadResponse.public_id, {
-        resource_type: 'video',
-        format: 'jpg',
-        transformation: [
-          { width: 500, height: 300, crop: "fill" }, 
-          { start_offset: time, duration: 0.1 }
-        ]
-      });
-    });
+    // Assuming a maximum duration of 30 seconds for demonstration
+    const maxDuration = 8; // You may adjust based on your needs or video metadata
+    const times = Array.from({ length: maxDuration }, (_, i) => i + 1);
+
+    const screenshots = times.map(time => cloudinary.v2.url(uploadResponse.public_id, {
+      resource_type: 'video',
+      format: 'jpg',
+      transformation: [
+        { width: 300, height: 500, crop: "fill" }, 
+        { start_offset: `${time}s`, duration: 0.1 }
+      ]
+    }));
 
     return NextResponse.json({ status: 'success', data: screenshots });
   } catch (error) {
