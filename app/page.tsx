@@ -28,7 +28,9 @@ const Home = () => {
       const img = document.getElementById(`frame-${index}`) as HTMLImageElement;
       const prediction = await model.classify(img);
       if (prediction.length > 0) {
-        setPredictions(prev => ({ ...prev, [frames[index]]: prediction[0].className }));
+        // Take the highest probability classification and process it
+        const mostProbablePrediction = prediction[0].className.split(',')[0].trim();
+        setPredictions(prev => ({ ...prev, [frames[index]]: mostProbablePrediction }));
       }
     }
   };
